@@ -9,7 +9,7 @@
  */
 
 // TODO: link do wydarzenia w Calendly, np. 'https://calendly.com/twoja-nazwa/bezplatna-analiza'
-export const CALENDLY_URL = '';
+export const CALENDLY_URL = 'https://calendly.com/turowski_piotr/30min';
 
 // TODO: adres z wyzwalacza „Inbound Webhook” w GoHighLevel (Automation → Workflows)
 export const GHL_WEBHOOK_URL = '';
@@ -18,4 +18,4 @@ export const GHL_WEBHOOK_URL = '';
 export const META_PIXEL_ID = '';
 
 // TODO: adres e-mail widoczny w stopce i w danych strukturalnych
-export const CONTACT_EMAIL = '';
+export const CONTACT_EMAIL = 'piotr@everweb.pl';
