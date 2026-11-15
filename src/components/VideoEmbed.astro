@@ -1,0 +1,49 @@
+---
+/**
+ * Wideo z YouTube lub Vimeo. Wklej zwykły link w src/content/site.ts (pole videoUrl).
+ * Odtwarzacz ładuje się dopiero po kliknięciu – strona pozostaje szybka.
+ * Bez linku wyświetla się placeholder z ikoną odtwarzania.
+ */
+import Icon from './Icon.astro';
+import { parseVideo } from '../lib/video';
+interface Props { url?: string; title: string; placeholder: string; class?: string }
+const { url, title, placeholder, class: cls = '' } = Astro.props;
+const video = parseVideo(url);
+const poster = video?.provider === 'youtube' ? `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg` : undefined;
+---
+{
+  video ? (
+    <div class:list={['video-embed relative aspect-video w-full overflow-hidden bg-ink', cls]} data-embed={video.embed} data-title={title}>
+      {poster && <img src={poster} alt="" width="480" height="360" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover opacity-80" />}
+      <button type="button" class="group absolute inset-0 flex items-center justify-center text-white" aria-label={`Odtwórz: ${title}`}>
+        <span class="flex h-20 w-20 items-center justify-center rounded-full bg-white text-ink transition-colors group-hover:bg-accent">
+          <Icon name="play" size={30} class="translate-x-0.5" />
+        </span>
+      </button>
+    </div>
+  ) : (
+    <div
+      class:list={['relative flex aspect-video w-full flex-col items-center justify-center gap-4 border border-dashed border-[#c9c9c6] bg-soft text-center', cls]}
+      role="img"
+      aria-label={`${placeholder}: ${title}`}
+    >
+      <span class="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-white md:h-20 md:w-20">
+        <Icon name="play" size={28} class="translate-x-0.5" />
+      </span>
+      <span class="text-sm font-semibold">{placeholder}</span>
+    </div>
+  )
+}
+<script>
+  document.querySelectorAll<HTMLElement>('.video-embed').forEach((box) => {
+    box.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = box.dataset.embed!;
+      iframe.title = box.dataset.title ?? 'Wideo';
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      iframe.allowFullscreen = true;
+      iframe.className = 'absolute inset-0 h-full w-full';
+      box.replaceChildren(iframe);
+    });
+  });
+</script>

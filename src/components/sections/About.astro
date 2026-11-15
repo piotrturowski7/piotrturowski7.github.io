@@ -1,0 +1,37 @@
+---
+import { Picture } from 'astro:assets';
+import Section from '../Section.astro';
+import MediaPlaceholder from '../MediaPlaceholder.astro';
+import { about } from '../../content/site';
+import { getImage } from '../../lib/assets';
+const photo = getImage('piotr');
+---
+<Section index="07" label={about.label} title={about.title}>
+  <div class="mt-12 grid gap-10 md:mt-16 md:grid-cols-9 md:gap-10">
+    <div class="md:col-span-4">
+      {photo ? (
+        <Picture
+          src={photo}
+          alt={about.photoAlt}
+          formats={['avif', 'webp']}
+          widths={[360, 560, 800].filter((w) => w <= photo.width)}
+          sizes="(min-width: 1024px) 380px, (min-width: 768px) 40vw, 100vw"
+          loading="lazy"
+          decoding="async"
+          class="aspect-[4/5] w-full object-cover"
+        />
+      ) : (
+        <MediaPlaceholder ratio="4 / 5" label="Tu pojawi się zdjęcie Piotra" file="materialy/piotr.jpg" />
+      )}
+    </div>
+    <div class="flex flex-col md:col-span-5">
+      {about.paragraphs.map((p, i) => (
+        <p class:list={[i === 0 ? 'text-xl leading-relaxed md:text-2xl md:leading-relaxed' : 'mt-6 text-lg leading-relaxed text-muted']}>{p}</p>
+      ))}
+      <div class="mt-10 border-t border-line pt-6 md:mt-auto">
+        <p class="font-semibold">{about.signature}</p>
+        <p class="text-sm text-muted">{about.role}</p>
+      </div>
+    </div>
+  </div>
+</Section>

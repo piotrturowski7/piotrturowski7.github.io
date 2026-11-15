@@ -1,0 +1,17 @@
+---
+/** Elegancki placeholder brakującej grafiki – zachowuje docelowe proporcje. */
+import Icon from './Icon.astro';
+import { media } from '../content/site';
+interface Props { ratio: string; label: string; file: string; class?: string; dark?: boolean }
+const { ratio, label, file, class: cls = '' } = Astro.props;
+---
+<div
+  class:list={['relative flex w-full flex-col items-center justify-center gap-2 border border-dashed border-[#c9c9c6] bg-soft p-2 text-center sm:gap-3 sm:p-4', cls]}
+  style={`aspect-ratio: ${ratio}`}
+  role="img"
+  aria-label={`${label} (${media.missingFile}: ${file})`}
+>
+  <Icon name="image" size={28} class="text-accent" />
+  <span class="text-xs font-semibold leading-snug sm:text-sm">{label}</span>
+  <span class="font-mono text-[0.6875rem] break-all text-muted sm:text-xs">{file}</span>
+</div>

@@ -1,0 +1,59 @@
+---
+import { cookies } from '../content/site';
+---
+<div
+  id="cookie-banner"
+  role="region"
+  aria-label={cookies.title}
+  hidden
+  class="fixed inset-x-0 bottom-0 z-50 border-t border-ink bg-paper"
+>
+  <div class="page flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between md:gap-10">
+    <div class="max-w-2xl text-sm leading-relaxed">
+      <p class="font-semibold">{cookies.title}</p>
+      <p class="mt-1 text-muted">
+        {cookies.text} <a class="text-ink link-underline" href="/polityka-prywatnosci/">{cookies.link}</a>
+      </p>
+    </div>
+    <div class="grid shrink-0 grid-cols-2 gap-3 md:w-80">
+      <button type="button" class="btn btn-outline !min-h-12 !px-4" data-consent="granted">{cookies.accept}</button>
+      <button type="button" class="btn btn-outline !min-h-12 !px-4" data-consent="denied">{cookies.reject}</button>
+    </div>
+  </div>
+</div>
+<script>
+  import { getConsent, setConsent, loadPixel, clearPixelCookies } from '../scripts/consent';
+
+  const banner = document.getElementById('cookie-banner')!;
+  const setOpen = (open: boolean) => {
+    banner.hidden = !open;
+    document.body.classList.toggle('cookie-open', open);
+    document.dispatchEvent(new Event('cookie-banner'));
+  };
+
+  const current = getConsent();
+  if (current === 'granted') loadPixel();
+  else if (current === null) setOpen(true);
+
+  banner.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const previous = getConsent();
+      const value = btn.dataset.consent as 'granted' | 'denied';
+      setConsent(value);
+      setOpen(false);
+      if (value === 'granted') loadPixel();
+      else if (previous === 'granted') {
+        // Piksel był już załadowany – usuwamy ciasteczka i odświeżamy, żeby go wyłączyć.
+        clearPixelCookies();
+        location.reload();
+      }
+    }),
+  );
+
+  document.querySelectorAll('[data-cookie-settings]').forEach((el) =>
+    el.addEventListener('click', () => {
+      setOpen(true);
+      banner.querySelector<HTMLButtonElement>('[data-consent]')?.focus();
+    }),
+  );
+</script>

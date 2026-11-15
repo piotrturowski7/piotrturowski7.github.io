@@ -1,0 +1,31 @@
+---
+import CtaButton from '../CtaButton.astro';
+import Todo from '../Todo.astro';
+import { guarantee } from '../../content/site';
+---
+<section id="gwarancja" aria-labelledby="gwarancja-tytul" class="on-dark bg-ink text-white">
+  <div class="page reveal grid gap-y-10 py-20 md:py-28 lg:grid-cols-12 lg:gap-x-10">
+    <div class="lg:col-span-3">
+      <p class="flex items-baseline gap-3 text-sm font-semibold">
+        <span class="tabular-nums" aria-hidden="true">06</span>
+        <span class="h-px w-6 translate-y-[-0.25em] bg-accent" aria-hidden="true"></span>
+        <span class="uppercase tracking-[0.08em]">{guarantee.label}</span>
+      </p>
+    </div>
+    <div class="lg:col-span-9">
+      <h2 id="gwarancja-tytul" class="h2 max-w-[16ch]">
+        {guarantee.title.split('. ').map((part, i, arr) =>
+          i === 0 ? <>{part}.{' '}</> : <span class="text-accent">{part}{i < arr.length - 1 ? '. ' : ''}</span>,
+        )}
+      </h2>
+      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-white/80 md:text-xl md:leading-relaxed">{guarantee.text}</p>
+      <div class="mt-12 max-w-2xl border-t border-white/20 pt-8">
+        <h3 class="h3">{guarantee.termsTitle}</h3>
+        <p class="mt-3 text-white/80"><Todo text={guarantee.terms} /></p>
+      </div>
+      <div class="mt-12">
+        <CtaButton variant="inverse" class="w-full sm:w-auto" />
+      </div>
+    </div>
+  </div>
+</section>

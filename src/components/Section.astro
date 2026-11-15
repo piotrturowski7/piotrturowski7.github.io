@@ -1,0 +1,21 @@
+---
+/** Sekcja w układzie redakcyjnym: numer i etykieta po lewej, treść po prawej. */
+interface Props { id?: string; index: string; label: string; title: string; class?: string; titleId?: string }
+const { id, index, label, title, class: cls = '' } = Astro.props;
+const headingId = `${id ?? label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-tytul`;
+---
+<section id={id} aria-labelledby={headingId} class:list={['border-t border-line', cls]}>
+  <div class="page reveal grid gap-y-10 py-20 md:py-28 lg:grid-cols-12 lg:gap-x-10">
+    <div class="lg:col-span-3">
+      <p class="flex items-baseline gap-3 text-sm font-semibold">
+        <span class="tabular-nums" aria-hidden="true">{index}</span>
+        <span class="h-px w-6 translate-y-[-0.25em] bg-accent" aria-hidden="true"></span>
+        <span class="uppercase tracking-[0.08em]">{label}</span>
+      </p>
+    </div>
+    <div class="lg:col-span-9">
+      <h2 id={headingId} class="h2 max-w-[18ch]">{title}</h2>
+      <slot />
+    </div>
+  </div>
+</section>

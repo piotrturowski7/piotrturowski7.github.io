@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { notFound } from '../content/site';
+---
+<Base title={notFound.seoTitle} noindex home={false}>
+  <section class="page flex min-h-[60vh] flex-col justify-center py-20" aria-labelledby="nf-tytul">
+    <p class="text-sm font-semibold tabular-nums">
+      <span class="mr-3 inline-block h-[2px] w-7 translate-y-[-0.25em] bg-accent align-middle" aria-hidden="true"></span>{notFound.code}
+    </p>
+    <h1 id="nf-tytul" class="h1 mt-6 max-w-[14ch]">{notFound.title}</h1>
+    <p class="mt-6 max-w-lg text-lg text-muted">{notFound.text}</p>
+    <div class="mt-10"><a href="/" class="btn">{notFound.back}</a></div>
+  </section>
+</Base>

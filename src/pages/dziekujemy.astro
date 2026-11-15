@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import Icon from '../components/Icon.astro';
+import { thanks } from '../content/site';
+---
+<Base title={thanks.seoTitle} noindex headerCta={false}>
+  <section class="page grid gap-14 py-16 md:py-24 lg:grid-cols-12 lg:gap-10" aria-labelledby="dziekujemy-tytul">
+    <div class="lg:col-span-6">
+      <span class="block h-[3px] w-10 bg-accent" aria-hidden="true"></span>
+      <h1 id="dziekujemy-tytul" class="h1 mt-8 max-w-[12ch]">{thanks.title}</h1>
+      <p class="mt-8 max-w-lg text-lg leading-relaxed text-muted md:text-xl">{thanks.text}</p>
+
+      <h2 class="h3 mt-14 border-t border-line pt-8">{thanks.prepareTitle}</h2>
+      <ul class="mt-6 space-y-4">
+        {thanks.prepareItems.map((item) => (
+          <li class="flex gap-4">
+            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center bg-accent text-ink"><Icon name="check" size={18} /></span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <a href="/" class="btn btn-outline mt-12">{thanks.back}</a>
+    </div>
+    <div class="lg:col-span-6 lg:pt-24">
+      <VideoEmbed url={thanks.videoUrl} title={thanks.videoTitle} placeholder={thanks.videoPlaceholder} />
+    </div>
+  </section>
+</Base>

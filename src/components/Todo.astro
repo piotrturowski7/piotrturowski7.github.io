@@ -1,0 +1,7 @@
+---
+/** Renderuje tekst; fragmenty [DO UZUPEŁNIENIA] wyświetla na żółtym tle. */
+import { splitTodo } from '../lib/todo';
+interface Props { text: string }
+const parts = splitTodo(Astro.props.text);
+---
+{parts.map((p) => (p.todo ? <mark class="todo">{p.text}</mark> : p.text))}

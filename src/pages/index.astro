@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/sections/Hero.astro';
+import Problem from '../components/sections/Problem.astro';
+import WhyMeta from '../components/sections/WhyMeta.astro';
+import Process from '../components/sections/Process.astro';
+import CaseStudy from '../components/sections/CaseStudy.astro';
+import Guarantee from '../components/sections/Guarantee.astro';
+import About from '../components/sections/About.astro';
+import ForWhom from '../components/sections/ForWhom.astro';
+import Faq from '../components/sections/Faq.astro';
+import Booking from '../components/sections/Booking.astro';
+import StickyCta from '../components/StickyCta.astro';
+---
+<Base home jsonLd>
+  <Hero />
+  <Problem />
+  <WhyMeta />
+  <Process />
+  <CaseStudy />
+  <Guarantee />
+  <About />
+  <ForWhom />
+  <Faq />
+  <Booking />
+  <StickyCta slot="after" />
+</Base>

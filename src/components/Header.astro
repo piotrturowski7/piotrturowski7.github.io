@@ -1,0 +1,22 @@
+---
+import Logo from './Logo.astro';
+import CtaButton from './CtaButton.astro';
+import { nav, BOOKING_ID } from '../content/site';
+interface Props { home?: boolean; showCta?: boolean }
+const { home = true, showCta = true } = Astro.props;
+---
+<header class="z-40 border-b border-line bg-paper/95 backdrop-blur-sm md:sticky md:top-0">
+  <div class="page flex h-16 items-center justify-between gap-4 md:h-20">
+    <a href="/" aria-label={nav.homeLabel} class="inline-flex items-center">
+      <Logo class="h-6 sm:h-7 md:h-8" />
+    </a>
+    {showCta && (
+      <CtaButton href={home ? `#${BOOKING_ID}` : `/#${BOOKING_ID}`} class="header-cta !min-h-11 !gap-2 whitespace-nowrap !px-3.5 text-sm sm:!px-4 sm:text-[0.9375rem] md:!min-h-12 md:!px-6" />
+    )}
+  </div>
+</header>
+<style>
+  @media (max-width: 400px) {
+    .header-cta :global(svg) { display: none; }
+  }
+</style>

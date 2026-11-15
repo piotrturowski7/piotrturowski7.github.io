@@ -1,0 +1,348 @@
+---
+import Section from '../Section.astro';
+import Icon from '../Icon.astro';
+import Todo from '../Todo.astro';
+import { booking, company, BOOKING_ID } from '../../content/site';
+
+const f = booking.fields;
+const textFields = [
+  { id: 'name', type: 'text', required: true, ...f.name },
+  { id: 'email', type: 'email', required: true, inputmode: 'email', ...f.email },
+  { id: 'phone', type: 'tel', required: true, inputmode: 'tel', ...f.phone },
+  { id: 'company', type: 'text', required: true, ...f.company },
+  { id: 'website', type: 'text', required: false, inputmode: 'url', ...f.website },
+] as const;
+const radioFields = [
+  { id: 'business', ...f.business },
+  { id: 'volume', ...f.volume },
+  { id: 'capacity', ...f.capacity },
+];
+---
+<Section id={BOOKING_ID} index="10" label={booking.label} title={booking.title}>
+  <div class="mt-10 grid gap-12 md:mt-14 lg:grid-cols-9 lg:gap-10">
+    <div class="self-start lg:sticky lg:top-28 lg:col-span-3">
+      <p class="text-lg font-semibold">{booking.lead}</p>
+      <p class="mt-4 text-muted">{booking.text}</p>
+    </div>
+
+    <div class="lg:col-span-6">
+      <div class="border border-ink p-5 sm:p-8 md:p-10" id="booking-panel">
+        <!-- Wskaźnik kroków -->
+        <div class="flex items-center justify-between gap-4">
+          <p class="text-sm font-semibold tabular-nums" id="step-label" aria-live="polite">{booking.stepLabel(1, 2)}</p>
+          <div class="flex w-28 gap-1.5" aria-hidden="true">
+            <span class="h-1 flex-1 bg-accent"></span>
+            <span class="h-1 flex-1 bg-line transition-colors" id="step-bar-2"></span>
+          </div>
+        </div>
+
+        <!-- KROK 1: formularz -->
+        <div id="step-1" class="mt-8">
+          <h3 class="h3">{booking.step1Title}</h3>
+          <p class="mt-1 text-sm text-muted">{booking.requiredNote}</p>
+
+          <form id="lead-form" class="mt-8 flex flex-col gap-6" novalidate>
+            {textFields.map((field) => (
+              <div class="field" data-field={field.id}>
+                <label for={`f-${field.id}`} class="block text-sm font-semibold">
+                  {field.label}
+                  {field.required ? <span aria-hidden="true"> *</span> : <span class="font-normal text-muted"> {booking.optional}</span>}
+                </label>
+                <input
+                  id={`f-${field.id}`}
+                  name={field.id}
+                  type={field.type}
+                  autocomplete={field.autocomplete}
+                  inputmode={'inputmode' in field ? field.inputmode : undefined}
+                  placeholder={'placeholder' in field ? field.placeholder : undefined}
+                  required={field.required}
+                  aria-required={field.required ? 'true' : undefined}
+                  aria-describedby={`e-${field.id}`}
+                  class="mt-2 block h-13 w-full border border-[#bdbdba] bg-paper px-4 text-base transition-colors placeholder:text-[#8a8a87] hover:border-ink focus:border-ink focus:outline-2 focus:outline-offset-0 focus:outline-ink aria-invalid:border-error"
+                />
+                <p id={`e-${field.id}`} class="field-error mt-2 flex items-start gap-1.5 text-sm text-error" hidden>
+                  <Icon name="alert" size={16} class="mt-0.5 shrink-0" /><span></span>
+                </p>
+              </div>
+            ))}
+
+            {radioFields.map((field) => (
+              <fieldset class="field" data-field={field.id} aria-describedby={`e-${field.id}`}>
+                <legend class="text-sm font-semibold">{field.label}<span aria-hidden="true"> *</span></legend>
+                <div class:list={['mt-3 grid gap-2', field.id === 'volume' && 'grid-cols-2 sm:grid-cols-4']}>
+                  {field.options.map((opt, i) => (
+                    <label class="option flex min-h-12 cursor-pointer items-center gap-3 border border-[#bdbdba] px-4 py-3 transition-colors hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-soft has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink">
+                      <input
+                        type="radio"
+                        name={field.id}
+                        value={opt}
+                        required
+                        data-no={field.id === 'capacity' && i === f.capacity.noIndex ? '' : undefined}
+                        class="peer sr-only"
+                      />
+                      <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-ink peer-checked:[&>span]:scale-100" aria-hidden="true">
+                        <span class="h-2.5 w-2.5 scale-0 rounded-full bg-ink transition-transform motion-reduce:transition-none"></span>
+                      </span>
+                      <span class="text-[0.9375rem] leading-snug">{opt}</span>
+                    </label>
+                  ))}
+                </div>
+                <p id={`e-${field.id}`} class="field-error mt-2 flex items-start gap-1.5 text-sm text-error" hidden>
+                  <Icon name="alert" size={16} class="mt-0.5 shrink-0" /><span></span>
+                </p>
+              </fieldset>
+            ))}
+
+            <!-- Pole-pułapka na boty: ludzie go nie widzą -->
+            <div class="hidden" aria-hidden="true">
+              <label>Nie wypełniaj <input type="text" name="hp_field" tabindex="-1" autocomplete="off" /></label>
+            </div>
+
+            <p id="form-summary" class="text-sm font-semibold text-error" role="alert" hidden></p>
+
+            <button type="submit" class="btn w-full" id="lead-submit">
+              <span data-label>{booking.submit}</span>
+              <Icon name="arrow" size={20} />
+            </button>
+
+            <p class="text-xs leading-relaxed text-muted">
+              {booking.privacy.before}<a class="text-ink link-underline" href="/polityka-prywatnosci/">{booking.privacy.link}</a>{booking.privacy.after}
+            </p>
+          </form>
+        </div>
+
+        <!-- KROK 2a: kalendarz -->
+        <div id="step-calendar" class="mt-8" hidden>
+          <h3 class="h3" tabindex="-1" id="step-calendar-title">{booking.step2Title}</h3>
+          <div id="calendly-missing" class="mt-6" hidden>
+            <p class="text-base"><Todo text={booking.calendarMissing} /></p>
+          </div>
+          <div id="calendly-box" class="-mx-5 mt-4 sm:-mx-8 md:-mx-10" hidden>
+            <p class="px-5 py-6 text-sm text-muted sm:px-8 md:px-10" id="calendly-loading">{booking.calendarLoading}</p>
+            <div id="calendly-embed" class="h-[1050px] min-w-[300px] sm:h-[760px]"></div>
+          </div>
+          <p class="mt-6 text-sm text-muted">
+            {booking.calendarFallback} <a class="text-ink link-underline" href={`tel:${company.phoneHref}`}>{company.phoneDisplay}</a>
+          </p>
+        </div>
+
+        <!-- KROK 2b: brak wolnych mocy -->
+        <div id="step-nocapacity" class="mt-8" hidden>
+          <span class="block h-[3px] w-7 bg-accent" aria-hidden="true"></span>
+          <p class="mt-6 text-xl leading-relaxed outline-none md:text-2xl md:leading-relaxed" tabindex="-1" id="step-nocapacity-title">{booking.noCapacityText}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  import { CALENDLY_URL, GHL_WEBHOOK_URL } from '../../config';
+  import { booking } from '../../content/site';
+  import { readAttribution } from '../../scripts/attribution';
+  import { track } from '../../scripts/consent';
+
+  const form = document.getElementById('lead-form') as HTMLFormElement | null;
+  if (form) initBooking(form);
+
+  function initBooking(form: HTMLFormElement) {
+    const E = booking.errors;
+    const submitBtn = document.getElementById('lead-submit') as HTMLButtonElement;
+    const summary = document.getElementById('form-summary')!;
+    let attempted = false;
+
+    const val = (name: string) => {
+      const el = form.elements.namedItem(name);
+      if (el instanceof RadioNodeList) return el.value;
+      return el instanceof HTMLInputElement ? el.value.trim() : '';
+    };
+
+    const validators: Record<string, (v: string) => string | null> = {
+      name: (v) => (!v ? E.required : v.replace(/[^\p{L}]/gu, '').length < 2 ? E.name : null),
+      email: (v) => (!v ? E.required : /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? null : E.email),
+      phone: (v) => {
+        if (!v) return E.required;
+        const digits = v.replace(/\D/g, '').length;
+        return /^[+\d\s().-]+$/.test(v) && digits >= 9 && digits <= 15 ? null : E.phone;
+      },
+      company: (v) => (!v ? E.required : null),
+      website: (v) => (!v || /^(https?:\/\/)?([\p{L}\d-]+\.)+[\p{L}]{2,}(\/\S*)?$/iu.test(v) ? null : E.website),
+      business: (v) => (v ? null : E.choose),
+      volume: (v) => (v ? null : E.choose),
+      capacity: (v) => (v ? null : E.choose),
+    };
+
+    const showError = (name: string, message: string | null) => {
+      const wrap = form.querySelector<HTMLElement>(`[data-field="${name}"]`);
+      const err = document.getElementById(`e-${name}`);
+      if (!wrap || !err) return;
+      err.hidden = !message;
+      err.querySelector('span')!.textContent = message ?? '';
+      const input = wrap.querySelector('input');
+      if (wrap.tagName === 'FIELDSET') {
+        wrap.querySelectorAll('input').forEach((r) => r.toggleAttribute('aria-invalid', !!message));
+        wrap.querySelectorAll('label.option').forEach((l) => l.classList.toggle('!border-error', !!message));
+      } else if (input) {
+        if (message) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      }
+    };
+
+    const validate = (name: string) => {
+      const msg = validators[name](val(name));
+      showError(name, msg);
+      return !msg;
+    };
+
+    // Po pierwszej próbie wysłania pola walidują się na bieżąco
+    Object.keys(validators).forEach((name) => {
+      const el = form.elements.namedItem(name);
+      const inputs = el instanceof RadioNodeList ? Array.from(el) : [el];
+      inputs.forEach((input) => {
+        input?.addEventListener('change', () => attempted && validate(name));
+        input?.addEventListener('blur', () => {
+          if (attempted || (input as HTMLInputElement).value) validate(name);
+        });
+        input?.addEventListener('input', () => attempted && validate(name));
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      attempted = true;
+      const invalid = Object.keys(validators).filter((n) => !validate(n));
+      if (invalid.length) {
+        summary.textContent = E.summary;
+        summary.hidden = false;
+        const first = form.querySelector<HTMLInputElement>(`[data-field="${invalid[0]}"] input`);
+        first?.focus();
+        return;
+      }
+      summary.hidden = true;
+
+      const fullName = val('name');
+      const [firstName, ...rest] = fullName.split(/\s+/);
+      const capacityInput = form.querySelector<HTMLInputElement>('input[name="capacity"]:checked');
+      const noCapacity = capacityInput?.hasAttribute('data-no') ?? false;
+
+      const payload: Record<string, string> = {
+        full_name: fullName,
+        first_name: firstName,
+        last_name: rest.join(' '),
+        email: val('email'),
+        phone: val('phone'),
+        company_name: val('company'),
+        website: val('website'),
+        business_type: val('business'),
+        houses_per_year: val('volume'),
+        production_capacity: val('capacity'),
+        has_capacity: noCapacity ? 'nie' : 'tak',
+        utm_source: '',
+        utm_medium: '',
+        utm_campaign: '',
+        utm_term: '',
+        utm_content: '',
+        fbclid: '',
+        landing_page: '',
+        ...readAttribution(),
+        page_url: location.href,
+        submitted_at: new Date().toISOString(),
+        source: 'everhome.com.pl – formularz analizy',
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.querySelector('[data-label]')!.textContent = booking.sending;
+
+      const isBot = val('hp_field') !== '';
+      if (!isBot) await sendToCrm(payload);
+      track('Lead');
+
+      showStep2(noCapacity, payload);
+    });
+
+    async function sendToCrm(data: Record<string, string>) {
+      const url = GHL_WEBHOOK_URL.trim();
+      if (!url) {
+        console.warn('[everhome] GHL_WEBHOOK_URL jest pusty – zgłoszenie nie trafiło do CRM.', data);
+        return;
+      }
+      // application/x-www-form-urlencoded + mode "no-cors" = zapytanie „proste”, bez preflight CORS.
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 6000);
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          keepalive: true,
+          body: new URLSearchParams(data),
+          signal: controller.signal,
+        });
+      } catch (err) {
+        console.error('[everhome] Nie udało się wysłać zgłoszenia do CRM:', err);
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function showStep2(noCapacity: boolean, data: Record<string, string>) {
+      document.getElementById('step-1')!.hidden = true;
+      document.getElementById('step-label')!.textContent = booking.stepLabel(2, 2);
+      const bar = document.getElementById('step-bar-2')!;
+      bar.classList.remove('bg-line');
+      bar.classList.add('bg-accent');
+
+      const panelId = noCapacity ? 'step-nocapacity' : 'step-calendar';
+      document.getElementById(panelId)!.hidden = false;
+      document.getElementById('booking-panel')!.scrollIntoView({ block: 'start' });
+      document.getElementById(`${panelId}-title`)?.focus({ preventScroll: true });
+
+      if (!noCapacity) openCalendly(data);
+    }
+
+    function openCalendly(data: Record<string, string>) {
+      const url = CALENDLY_URL.trim();
+      if (!url) {
+        document.getElementById('calendly-missing')!.hidden = false;
+        return;
+      }
+      const box = document.getElementById('calendly-box')!;
+      const embed = document.getElementById('calendly-embed')!;
+      box.hidden = false;
+
+      const init = () => {
+        document.getElementById('calendly-loading')?.remove();
+        (window as any).Calendly.initInlineWidget({
+          url: url + (url.includes('?') ? '&' : '?') + 'hide_gdpr_banner=1',
+          parentElement: embed,
+          prefill: { name: data.full_name, email: data.email },
+          utm: {
+            utmSource: data.utm_source || undefined,
+            utmMedium: data.utm_medium || undefined,
+            utmCampaign: data.utm_campaign || undefined,
+            utmTerm: data.utm_term || undefined,
+            utmContent: data.utm_content || undefined,
+          },
+        });
+      };
+
+      // Skrypt Calendly ładujemy dopiero teraz – gdy jest naprawdę potrzebny.
+      if ((window as any).Calendly) init();
+      else {
+        const s = document.createElement('script');
+        s.src = 'https://assets.calendly.com/assets/external/widget.js';
+        s.async = true;
+        s.onload = init;
+        s.onerror = () => console.error('[everhome] Nie udało się załadować kalendarza Calendly.');
+        document.head.appendChild(s);
+      }
+
+      window.addEventListener('message', (e) => {
+        if (!/^https:\/\/([\w-]+\.)?calendly\.com$/.test(e.origin)) return;
+        if (e.data?.event === 'calendly.event_scheduled') {
+          track('Schedule');
+          setTimeout(() => location.assign('/dziekujemy/'), 400);
+        }
+      });
+    }
+  }
+</script>

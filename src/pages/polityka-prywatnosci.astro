@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import { privacyPage } from '../content/site';
+// Treść polityki edytujesz w pliku src/content/polityka-prywatnosci.md
+import { Content } from '../content/polityka-prywatnosci.md';
+---
+<Base title={privacyPage.seoTitle} home={false}>
+  <article class="page py-16 md:py-24">
+    <div class="mx-auto max-w-3xl">
+      <span class="block h-[3px] w-10 bg-accent" aria-hidden="true"></span>
+      <h1 class="h2 mt-8">{privacyPage.title}</h1>
+      <div class="prose-eh mt-10 text-lg leading-relaxed">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Base>

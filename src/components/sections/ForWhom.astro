@@ -1,0 +1,31 @@
+---
+import Section from '../Section.astro';
+import Icon from '../Icon.astro';
+import { forWhom } from '../../content/site';
+---
+<Section index="08" label={forWhom.label} title={forWhom.title}>
+  <div class="mt-12 grid border-t border-line md:mt-16 md:grid-cols-2">
+    <div class="border-b border-line py-8 md:border-b-0 md:pr-10 md:py-10">
+      <h3 class="h3">{forWhom.yes.title}</h3>
+      <ul class="mt-6 space-y-5">
+        {forWhom.yes.items.map((t) => (
+          <li class="flex gap-4">
+            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center bg-accent text-ink"><Icon name="check" size={18} /></span>
+            <span>{t}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="py-8 md:border-l md:border-line md:py-10 md:pl-10">
+      <h3 class="h3">{forWhom.no.title}</h3>
+      <ul class="mt-6 space-y-5">
+        {forWhom.no.items.map((t) => (
+          <li class="flex gap-4 text-muted">
+            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center border border-line text-ink"><Icon name="x" size={16} /></span>
+            <span>{t}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</Section>

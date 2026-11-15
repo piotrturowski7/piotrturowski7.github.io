@@ -1,0 +1,10 @@
+---
+import Icon from './Icon.astro';
+import { CTA_LABEL, BOOKING_ID } from '../content/site';
+interface Props { href?: string; variant?: 'primary' | 'inverse'; class?: string; label?: string }
+const { href = `#${BOOKING_ID}`, variant = 'primary', class: cls = '', label = CTA_LABEL } = Astro.props;
+---
+<a href={href} class:list={['btn', variant === 'inverse' && 'btn-inverse', cls]} data-cta>
+  <span>{label}</span>
+  <Icon name="arrow" size={20} />
+</a>

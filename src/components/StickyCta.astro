@@ -1,0 +1,30 @@
+---
+/** Przyklejony przycisk CTA na telefonach. Pojawia się po przewinięciu hero, chowa przy sekcji rozmowy. */
+import CtaButton from './CtaButton.astro';
+---
+<div
+  id="sticky-cta"
+  class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-line bg-paper/95 p-3 backdrop-blur-sm transition-transform duration-300 motion-reduce:transition-none md:hidden"
+  aria-hidden="true"
+  inert
+>
+  <CtaButton class="w-full" />
+</div>
+<script>
+  const bar = document.getElementById('sticky-cta');
+  const hero = document.getElementById('hero');
+  const booking = document.getElementById('umow-rozmowe');
+  if (bar && hero && 'IntersectionObserver' in window) {
+    let heroVisible = true;
+    let bookingVisible = false;
+    const update = () => {
+      const show = !heroVisible && !bookingVisible && !document.body.classList.contains('cookie-open');
+      bar.classList.toggle('translate-y-full', !show);
+      bar.toggleAttribute('inert', !show);
+      bar.setAttribute('aria-hidden', String(!show));
+    };
+    new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; update(); }).observe(hero);
+    if (booking) new IntersectionObserver(([e]) => { bookingVisible = e.isIntersecting; update(); }).observe(booking);
+    document.addEventListener('cookie-banner', update);
+  }
+</script>

@@ -1,0 +1,35 @@
+---
+import Logo from './Logo.astro';
+import Todo from './Todo.astro';
+import { company, footer } from '../content/site';
+import { CONTACT_EMAIL } from '../config';
+---
+<footer class="border-t border-line pb-28 md:pb-0">
+  <div class="page grid gap-10 py-14 md:grid-cols-12 md:py-16">
+    <div class="md:col-span-4">
+      <a href="/" aria-label="everhome – strona główna" class="inline-flex"><Logo class="h-7" /></a>
+      <p class="mt-5 max-w-xs text-sm text-muted">{company.brandNote}</p>
+    </div>
+    <address class="text-sm not-italic leading-7 text-muted md:col-span-4">
+      {company.street}<br />
+      {company.postalCode} {company.city}<br />
+      {footer.nipPrefix} {company.nip}<br />
+      {footer.phonePrefix} <a class="text-ink link-underline" href={`tel:${company.phoneHref}`}>{company.phoneDisplay}</a><br />
+      {footer.emailPrefix}{' '}
+      {CONTACT_EMAIL ? (
+        <a class="text-ink link-underline" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      ) : (
+        <Todo text={footer.emailMissing} />
+      )}
+    </address>
+    <nav aria-label="Informacje prawne" class="text-sm md:col-span-4">
+      <ul class="flex flex-col gap-3 leading-7">
+        <li><a class="link-underline" href="/polityka-prywatnosci/">{footer.privacy}</a></li>
+        <li><button type="button" class="link-underline cursor-pointer" data-cookie-settings>{footer.cookies}</button></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="page border-t border-line py-6 text-sm text-muted">
+    <p>{company.copyright}</p>
+  </div>
+</footer>
