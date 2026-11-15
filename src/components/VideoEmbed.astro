@@ -1,36 +1,62 @@
 ---
 /**
- * Wideo z YouTube lub Vimeo. Wklej zwykły link w src/content/site.ts (pole videoUrl).
- * Odtwarzacz ładuje się dopiero po kliknięciu – strona pozostaje szybka.
+ * Wideo z YouTube, Vimeo albo własny plik MP4.
+ * - YouTube/Vimeo: wklej zwykły link (działa też YouTube Shorts). Odtwarzacz ładuje się dopiero po kliknięciu.
+ * - Plik MP4: wrzuć go do folderu public/ (np. public/reklama-1.mp4) i wpisz ścieżkę '/reklama-1.mp4'.
  * Bez linku wyświetla się placeholder z ikoną odtwarzania.
  */
 import Icon from './Icon.astro';
 import { parseVideo } from '../lib/video';
-interface Props { url?: string; title: string; placeholder: string; class?: string }
-const { url, title, placeholder, class: cls = '' } = Astro.props;
-const video = parseVideo(url);
+interface Props {
+  url?: string;
+  title: string;
+  placeholder: string;
+  class?: string;
+  /** proporcje, np. '16 / 9' (domyślnie) albo '9 / 16' dla pionowych reklam */
+  ratio?: string;
+  /** mniejszy przycisk – do galerii */
+  compact?: boolean;
+}
+const { url, title, placeholder, class: cls = '', ratio = '16 / 9', compact = false } = Astro.props;
+const src = (url ?? '').trim();
+const isFile = /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(src);
+const video = isFile ? null : parseVideo(src);
 const poster = video?.provider === 'youtube' ? `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg` : undefined;
+const style = `aspect-ratio: ${ratio}`;
+const btn = compact ? 'h-12 w-12' : 'h-20 w-20';
+const icon = compact ? 20 : 30;
 ---
 {
-  video ? (
-    <div class:list={['video-embed relative aspect-video w-full overflow-hidden bg-ink', cls]} data-embed={video.embed} data-title={title}>
+  isFile ? (
+    <video
+      class:list={['block w-full bg-ink object-cover', cls]}
+      style={style}
+      src={`${src}#t=0.1`}
+      controls
+      playsinline
+      preload="metadata"
+      aria-label={title}
+    />
+  ) : video ? (
+    <div class:list={['video-embed relative w-full overflow-hidden bg-ink', cls]} style={style} data-embed={video.embed} data-title={title}>
       {poster && <img src={poster} alt="" width="480" height="360" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover opacity-80" />}
       <button type="button" class="group absolute inset-0 flex items-center justify-center text-white" aria-label={`Odtwórz: ${title}`}>
-        <span class="flex h-20 w-20 items-center justify-center rounded-full bg-white text-ink transition-colors group-hover:bg-accent">
-          <Icon name="play" size={30} class="translate-x-0.5" />
+        <span class:list={['flex items-center justify-center rounded-full bg-white text-ink transition-colors group-hover:bg-accent', btn]}>
+          <Icon name="play" size={icon} class="translate-x-0.5" />
         </span>
       </button>
     </div>
   ) : (
     <div
-      class:list={['relative flex aspect-video w-full flex-col items-center justify-center gap-4 border border-dashed border-[#c9c9c6] bg-soft text-center', cls]}
+      class:list={['relative flex w-full flex-col items-center justify-center gap-3 border border-dashed border-[#c9c9c6] bg-soft p-2 text-center', cls]}
+      style={style}
       role="img"
       aria-label={`${placeholder}: ${title}`}
     >
-      <span class="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-white md:h-20 md:w-20">
-        <Icon name="play" size={28} class="translate-x-0.5" />
+      <span class:list={['flex items-center justify-center rounded-full bg-ink text-white', compact ? 'h-11 w-11' : 'h-16 w-16 md:h-20 md:w-20']}>
+        <Icon name="play" size={compact ? 18 : 28} class="translate-x-0.5" />
       </span>
-      <span class="text-sm font-semibold">{placeholder}</span>
+      <span class:list={['font-semibold', compact ? 'text-xs sm:text-sm' : 'text-sm']}>{placeholder}</span>
     </div>
   )
 }
