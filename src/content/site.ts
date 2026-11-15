@@ -44,11 +44,11 @@ export const hero = {
   lead: 'Tworzymy reklamy i prowadzimy kampanie, które przyprowadzają do Twojej firmy osoby realnie zainteresowane budową domu. Gwarantujemy minimum 3 umowy w 90 dni albo zwracamy pieniądze.',
   secondaryCta: 'Zobacz wyniki',
   stats: [
-    { value: '200', label: 'zapytań w miesiąc' },
-    { value: '15 zł', label: 'za zapytanie' },
-    { value: '3', label: 'podpisane umowy' },
+    { value: 'min. 200', label: 'zapytań w miesiąc' },
+    { value: 'ok. 15 zł', label: 'za zapytanie' },
+    { value: 'min. 3', label: 'podpisane umowy' },
   ],
-  statsNote: 'Kampania dla producenta domów modułowych, budżet 3 000 zł.',
+  statsNote: 'Dane na podstawie średnich wyników przy budżecie reklamowym 3 000 pln / msc',
   // TODO: wklej link do wideo z YouTube lub Vimeo, np. 'https://www.youtube.com/watch?v=XXXXXXXXXXX'
   videoUrl: '',
   videoTitle: 'Wideo: jak pozyskujemy klientów dla producentów domów modułowych',
@@ -134,8 +134,8 @@ export const caseStudy = {
   stats: [
     { label: 'Budżet', value: '3 000 zł' },
     { label: 'Czas', value: '1 miesiąc' },
-    { label: 'Zapytania', value: '200' },
-    { label: 'Koszt zapytania', value: '15 zł' },
+    { label: 'Zapytania', value: '216' },
+    { label: 'Koszt zapytania', value: '13,83 zł' },
     { label: 'Podpisane umowy', value: '3' },
   ],
   highlight: {
@@ -149,7 +149,6 @@ export const caseStudy = {
   galleryAdsTitle: 'Przykładowe reklamy',
   results: [
     { file: 'case-wyniki-1', alt: 'Zrzut ekranu z Menedżera reklam Meta: wyniki kampanii dla producenta domów modułowych, część 1' },
-    { file: 'case-wyniki-2', alt: 'Zrzut ekranu z Menedżera reklam Meta: wyniki kampanii dla producenta domów modułowych, część 2' },
   ],
   ads: [
     { file: 'reklama-1', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 1' },
@@ -165,9 +164,6 @@ export const guarantee = {
   label: 'Gwarancja',
   title: 'Minimum 3 umowy w 90 dni. Albo zwracamy pieniądze.',
   text: 'Jeśli w ciągu 90 dni współpracy nie podpiszesz co najmniej 3 umów z klientami pozyskanymi z naszych kampanii, zwracamy wynagrodzenie za naszą usługę. Ryzyko jest po naszej stronie.',
-  termsTitle: 'Warunki gwarancji',
-  // TODO: opisz warunki gwarancji (np. minimalny budżet, czas współpracy, sposób liczenia umów)
-  terms: TODO,
 };
 
 export const about = {
@@ -175,7 +171,7 @@ export const about = {
   title: 'Kto stoi za everhome',
   photoAlt: 'Piotr Turowski, założyciel everhome',
   paragraphs: [
-    'Nazywam się Piotr Turowski. Od 3 lat prowadzę kampanie Meta Ads dla firm m.in. z branży tatuażu, dekarstwa i edukacji.',
+    'Nazywam się Piotr Turowski. Od 3 lat prowadzę kampanie Meta Ads dla firm m.in. z branży tatuażu, budowlanej i edukacjnej.',
     'Dziś specjalizuję się w domach modułowych. To branża, która dynamicznie się rozwija, a producenci mają w niej ogromną szansę na wzrost. Moim zadaniem jest, żeby tę szansę wykorzystała Twoja firma.',
   ],
   signature: 'Piotr Turowski',
