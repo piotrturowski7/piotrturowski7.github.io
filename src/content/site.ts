@@ -151,9 +151,9 @@ export const caseStudy = {
     { file: 'case-wyniki-1', alt: 'Zrzut ekranu z Menedżera reklam Meta: wyniki kampanii dla producenta domów modułowych, część 1' },
   ],
   ads: [
-    { file: 'reklama-1', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 1' },
-    { file: 'reklama-2', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 2' },
-    { file: 'reklama-3', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 3' },
+    { file: 'reklama-1', video: '/reklama-1.mp4', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 1' },
+    { file: 'reklama-2', video: '/reklama-2.mp4', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 2' },
+    { file: 'reklama-3', video: '/reklama-3.mp4', alt: 'Przykładowa reklama domu modułowego na Facebooku i Instagramie, wariant 3' },
   ],
   zoomLabel: 'Powiększ',
   closeLabel: 'Zamknij',
