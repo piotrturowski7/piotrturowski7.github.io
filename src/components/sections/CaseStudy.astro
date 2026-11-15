@@ -2,7 +2,14 @@
 import Section from '../Section.astro';
 import GalleryItem from '../GalleryItem.astro';
 import Lightbox from '../Lightbox.astro';
+import VideoEmbed from '../VideoEmbed.astro';
 import { caseStudy } from '../../content/site';
+
+// Reklamy: jeśli w site.ts przy reklamie jest „video”, pokazujemy wideo zamiast zdjęcia.
+type Ad = { file: string; alt: string; video?: string };
+const ads = caseStudy.ads as Ad[];
+const hasVideo = ads.some((a) => a.video?.trim());
+const videoRatio = (caseStudy as { adsVideoRatio?: string }).adsVideoRatio || '9 / 16';
 ---
 <Section id={caseStudy.id} index="05" label={caseStudy.label} title={caseStudy.title}>
   <p class="mt-6 text-muted">{caseStudy.intro}</p>
@@ -42,9 +49,22 @@ import { caseStudy } from '../../content/site';
 
   <div class="mt-12">
     <h3 class="text-sm font-semibold tracking-[0.08em] uppercase">{caseStudy.galleryAdsTitle}</h3>
-    <ul class="mt-5 grid grid-cols-3 gap-2 sm:gap-4 md:gap-6">
-      {caseStudy.ads.map((r) => (
-        <li><GalleryItem file={r.file} alt={r.alt} ratio="4 / 5" sizes="(min-width: 1024px) 290px, 33vw" placeholder="Przykładowa reklama" /></li>
+    <ul class:list={[
+      'mt-5',
+      hasVideo
+        ? 'flex snap-x snap-mandatory gap-3 overflow-x-auto pb-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:pb-0 md:gap-6'
+        : 'grid grid-cols-3 gap-2 sm:gap-4 md:gap-6',
+    ]}>
+      {ads.map((r) => (
+        <li class:list={[hasVideo && 'w-[68%] shrink-0 snap-start sm:w-auto']}>
+          {r.video?.trim() ? (
+            <VideoEmbed url={r.video} title={r.alt} placeholder="Przykładowa reklama" ratio={videoRatio} compact />
+          ) : hasVideo ? (
+            <VideoEmbed title={r.alt} placeholder="Tu pojawi się wideo" ratio={videoRatio} compact />
+          ) : (
+            <GalleryItem file={r.file} alt={r.alt} ratio="4 / 5" sizes="(min-width: 1024px) 290px, 33vw" placeholder="Przykładowa reklama" />
+          )}
+        </li>
       ))}
     </ul>
   </div>
