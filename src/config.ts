@@ -12,7 +12,7 @@
 export const CALENDLY_URL = 'https://calendly.com/turowski_piotr/30min';
 
 // TODO: adres z wyzwalacza „Inbound Webhook” w GoHighLevel (Automation → Workflows)
-export const GHL_WEBHOOK_URL = '';
+export const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/dxawSwjByvk6eNUfRqjk/webhook-trigger/1de10c40-8453-4d68-92cb-b6e5d4555294';
 
 // TODO: identyfikator piksela z Menedżera zdarzeń Meta (same cyfry), np. '123456789012345'
 export const META_PIXEL_ID = '';
