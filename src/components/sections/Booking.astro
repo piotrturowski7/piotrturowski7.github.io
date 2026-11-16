@@ -1,8 +1,7 @@
 ---
 import Section from '../Section.astro';
 import Icon from '../Icon.astro';
-import Todo from '../Todo.astro';
-import { booking, company, BOOKING_ID } from '../../content/site';
+import { booking, BOOKING_ID } from '../../content/site';
 
 const f = booking.fields;
 const textFields = [
@@ -17,6 +16,11 @@ const radioFields = [
   { id: 'volume', ...f.volume },
   { id: 'capacity', ...f.capacity },
 ];
+// Zgody na kontakt – teksty w src/content/site.ts (booking.consents)
+type Consent = { id: string; label: string };
+const consents = ((booking as { consents?: Consent[] }).consents ?? []) as Consent[];
+const consentsTitle = (booking as { consentsTitle?: string }).consentsTitle ?? '';
+const consentsHint = (booking as { consentsHint?: string }).consentsHint ?? '';
 ---
 <Section id={BOOKING_ID} index="10" label={booking.label} title={booking.title}>
   <div class="mt-10 grid gap-12 md:mt-14 lg:grid-cols-9 lg:gap-10">
@@ -27,17 +31,8 @@ const radioFields = [
 
     <div class="lg:col-span-6">
       <div class="border border-ink p-5 sm:p-8 md:p-10" id="booking-panel">
-        <!-- Wskaźnik kroków -->
-        <div class="flex items-center justify-between gap-4">
-          <p class="text-sm font-semibold tabular-nums" id="step-label" aria-live="polite">{booking.stepLabel(1, 2)}</p>
-          <div class="flex w-28 gap-1.5" aria-hidden="true">
-            <span class="h-1 flex-1 bg-accent"></span>
-            <span class="h-1 flex-1 bg-line transition-colors" id="step-bar-2"></span>
-          </div>
-        </div>
-
-        <!-- KROK 1: formularz -->
-        <div id="step-1" class="mt-8">
+        <!-- Formularz -->
+        <div id="step-form">
           <h3 class="h3">{booking.step1Title}</h3>
           <p class="mt-1 text-sm text-muted">{booking.requiredNote}</p>
 
@@ -93,6 +88,28 @@ const radioFields = [
               </fieldset>
             ))}
 
+            {consents.length > 0 && (
+              <fieldset class="border-t border-line pt-6">
+                <legend class="sr-only">{consentsTitle}</legend>
+                <p class="text-sm font-semibold" aria-hidden="true">{consentsTitle}</p>
+                <div class="mt-4 flex flex-col gap-3">
+                  {consents.map((c) => (
+                    <label class="flex cursor-pointer items-start gap-3 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-4 has-[:focus-visible]:outline-ink">
+                      <input type="checkbox" name={`consent_${c.id}`} value="tak" class="peer sr-only" data-consent-text={c.label} />
+                      <span
+                        class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-ink text-transparent transition-colors peer-checked:border-accent peer-checked:bg-accent peer-checked:text-ink"
+                        aria-hidden="true"
+                      >
+                        <Icon name="check" size={16} />
+                      </span>
+                      <span class="text-sm leading-snug">{c.label}</span>
+                    </label>
+                  ))}
+                </div>
+                {consentsHint && <p class="mt-4 text-xs leading-relaxed text-muted">{consentsHint}</p>}
+              </fieldset>
+            )}
+
             <!-- Pole-pułapka na boty: ludzie go nie widzą -->
             <div class="hidden" aria-hidden="true">
               <label>Nie wypełniaj <input type="text" name="hp_field" tabindex="-1" autocomplete="off" /></label>
@@ -111,23 +128,8 @@ const radioFields = [
           </form>
         </div>
 
-        <!-- KROK 2a: kalendarz -->
-        <div id="step-calendar" class="mt-8" hidden>
-          <h3 class="h3" tabindex="-1" id="step-calendar-title">{booking.step2Title}</h3>
-          <div id="calendly-missing" class="mt-6" hidden>
-            <p class="text-base"><Todo text={booking.calendarMissing} /></p>
-          </div>
-          <div id="calendly-box" class="-mx-5 mt-4 sm:-mx-8 md:-mx-10" hidden>
-            <p class="px-5 py-6 text-sm text-muted sm:px-8 md:px-10" id="calendly-loading">{booking.calendarLoading}</p>
-            <div id="calendly-embed" class="h-[1050px] min-w-[300px] sm:h-[760px]"></div>
-          </div>
-          <p class="mt-6 text-sm text-muted">
-            {booking.calendarFallback} <a class="text-ink link-underline" href={`tel:${company.phoneHref}`}>{company.phoneDisplay}</a>
-          </p>
-        </div>
-
-        <!-- KROK 2b: brak wolnych mocy -->
-        <div id="step-nocapacity" class="mt-8" hidden>
+        <!-- Po wysłaniu: brak wolnych mocy -->
+        <div id="step-nocapacity" hidden>
           <span class="block h-[3px] w-7 bg-accent" aria-hidden="true"></span>
           <p class="mt-6 text-xl leading-relaxed outline-none md:text-2xl md:leading-relaxed" tabindex="-1" id="step-nocapacity-title">{booking.noCapacityText}</p>
         </div>
@@ -137,10 +139,12 @@ const radioFields = [
 </Section>
 
 <script>
-  import { CALENDLY_URL, GHL_WEBHOOK_URL } from '../../config';
+  import { GHL_WEBHOOK_URL } from '../../config';
   import { booking } from '../../content/site';
   import { readAttribution } from '../../scripts/attribution';
   import { track } from '../../scripts/consent';
+
+  const THANK_YOU_URL = '/dziekujemy/';
 
   const form = document.getElementById('lead-form') as HTMLFormElement | null;
   if (form) initBooking(form);
@@ -150,6 +154,7 @@ const radioFields = [
     const submitBtn = document.getElementById('lead-submit') as HTMLButtonElement;
     const summary = document.getElementById('form-summary')!;
     let attempted = false;
+    let sending = false;
 
     const val = (name: string) => {
       const el = form.elements.namedItem(name);
@@ -209,6 +214,7 @@ const radioFields = [
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (sending) return;
       attempted = true;
       const invalid = Object.keys(validators).filter((n) => !validate(n));
       if (invalid.length) {
@@ -224,6 +230,14 @@ const radioFields = [
       const [firstName, ...rest] = fullName.split(/\s+/);
       const capacityInput = form.querySelector<HTMLInputElement>('input[name="capacity"]:checked');
       const noCapacity = capacityInput?.hasAttribute('data-no') ?? false;
+      const submittedAt = new Date().toISOString();
+
+      // Zgody: tak/nie + pełna treść zgody i czas jej udzielenia (dowód zgody w CRM)
+      const consentData: Record<string, string> = {};
+      form.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="consent_"]').forEach((cb) => {
+        consentData[cb.name] = cb.checked ? 'tak' : 'nie';
+        consentData[`${cb.name}_text`] = cb.dataset.consentText ?? '';
+      });
 
       const payload: Record<string, string> = {
         full_name: fullName,
@@ -237,6 +251,9 @@ const radioFields = [
         houses_per_year: val('volume'),
         production_capacity: val('capacity'),
         has_capacity: noCapacity ? 'nie' : 'tak',
+        ...consentData,
+        consent_timestamp: submittedAt,
+        privacy_policy_url: `${location.origin}/polityka-prywatnosci/`,
         utm_source: '',
         utm_medium: '',
         utm_campaign: '',
@@ -246,10 +263,11 @@ const radioFields = [
         landing_page: '',
         ...readAttribution(),
         page_url: location.href,
-        submitted_at: new Date().toISOString(),
+        submitted_at: submittedAt,
         source: 'everhome.com.pl – formularz analizy',
       };
 
+      sending = true;
       submitBtn.disabled = true;
       submitBtn.querySelector('[data-label]')!.textContent = booking.sending;
 
@@ -257,7 +275,12 @@ const radioFields = [
       if (!isBot) await sendToCrm(payload);
       track('Lead');
 
-      showStep2(noCapacity, payload);
+      if (noCapacity) {
+        showNoCapacity();
+      } else {
+        // Krótka pauza, żeby piksel zdążył wysłać zdarzenie Lead przed przejściem na stronę podziękowania
+        setTimeout(() => location.assign(THANK_YOU_URL), 400);
+      }
     });
 
     async function sendToCrm(data: Record<string, string>) {
@@ -284,65 +307,11 @@ const radioFields = [
       }
     }
 
-    function showStep2(noCapacity: boolean, data: Record<string, string>) {
-      document.getElementById('step-1')!.hidden = true;
-      document.getElementById('step-label')!.textContent = booking.stepLabel(2, 2);
-      const bar = document.getElementById('step-bar-2')!;
-      bar.classList.remove('bg-line');
-      bar.classList.add('bg-accent');
-
-      const panelId = noCapacity ? 'step-nocapacity' : 'step-calendar';
-      document.getElementById(panelId)!.hidden = false;
+    function showNoCapacity() {
+      document.getElementById('step-form')!.hidden = true;
+      document.getElementById('step-nocapacity')!.hidden = false;
       document.getElementById('booking-panel')!.scrollIntoView({ block: 'start' });
-      document.getElementById(`${panelId}-title`)?.focus({ preventScroll: true });
-
-      if (!noCapacity) openCalendly(data);
-    }
-
-    function openCalendly(data: Record<string, string>) {
-      const url = CALENDLY_URL.trim();
-      if (!url) {
-        document.getElementById('calendly-missing')!.hidden = false;
-        return;
-      }
-      const box = document.getElementById('calendly-box')!;
-      const embed = document.getElementById('calendly-embed')!;
-      box.hidden = false;
-
-      const init = () => {
-        document.getElementById('calendly-loading')?.remove();
-        (window as any).Calendly.initInlineWidget({
-          url: url + (url.includes('?') ? '&' : '?') + 'hide_gdpr_banner=1',
-          parentElement: embed,
-          prefill: { name: data.full_name, email: data.email },
-          utm: {
-            utmSource: data.utm_source || undefined,
-            utmMedium: data.utm_medium || undefined,
-            utmCampaign: data.utm_campaign || undefined,
-            utmTerm: data.utm_term || undefined,
-            utmContent: data.utm_content || undefined,
-          },
-        });
-      };
-
-      // Skrypt Calendly ładujemy dopiero teraz – gdy jest naprawdę potrzebny.
-      if ((window as any).Calendly) init();
-      else {
-        const s = document.createElement('script');
-        s.src = 'https://assets.calendly.com/assets/external/widget.js';
-        s.async = true;
-        s.onload = init;
-        s.onerror = () => console.error('[everhome] Nie udało się załadować kalendarza Calendly.');
-        document.head.appendChild(s);
-      }
-
-      window.addEventListener('message', (e) => {
-        if (!/^https:\/\/([\w-]+\.)?calendly\.com$/.test(e.origin)) return;
-        if (e.data?.event === 'calendly.event_scheduled') {
-          track('Schedule');
-          setTimeout(() => location.assign('/dziekujemy/'), 400);
-        }
-      });
+      document.getElementById('step-nocapacity-title')?.focus({ preventScroll: true });
     }
   }
 </script>
