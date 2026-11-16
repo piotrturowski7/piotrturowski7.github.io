@@ -241,10 +241,8 @@ export const booking = {
   title: 'Sprawdź, ile umów możesz pozyskać z Meta Ads',
   lead: 'Bezpłatna analiza potencjału. 30 minut, bez zobowiązań.',
   text: 'Dowiesz się, ile zapytań i umów możesz realnie pozyskać w swoim regionie, jak reklamuje się Twoja konkurencja i jak mogłaby wyglądać Twoja pierwsza kampania.',
-  stepLabel: (current: number, total: number) => `Krok ${current} z ${total}`,
   step1Title: 'Twoje dane',
-  step2Title: 'Wybierz termin rozmowy',
-  submit: 'Przejdź do wyboru terminu',
+  submit: 'Wyślij zgłoszenie',
   sending: 'Wysyłanie…',
   requiredNote: 'Pola oznaczone * są wymagane.',
   optional: '(opcjonalnie)',
@@ -269,10 +267,18 @@ export const booking = {
         'Tak, w ciągu 3 miesięcy',
         'Nie, kalendarz jest pełny na 6 miesięcy lub dłużej',
       ],
-      // indeks odpowiedzi „Nie…”, po której nie pokazujemy kalendarza
+      // indeks odpowiedzi „Nie…”: po niej zamiast strony podziękowania pokazujemy komunikat noCapacityText
       noIndex: 2,
     },
   },
+  // Zgody na kontakt: dobrowolne, domyślnie odznaczone. Ich treść trafia do CRM jako dowód zgody.
+  consentsTitle: 'Zgody na kontakt (dobrowolne)',
+  consents: [
+    { id: 'phone', label: 'Wyrażam zgodę na kontakt telefoniczny w sprawie mojego zgłoszenia i usług everhome.' },
+    { id: 'sms', label: 'Wyrażam zgodę na otrzymywanie wiadomości SMS w sprawie mojego zgłoszenia i usług everhome.' },
+    { id: 'email', label: 'Wyrażam zgodę na otrzymywanie wiadomości e-mail w sprawie mojego zgłoszenia i usług everhome.' },
+  ],
+  consentsHint: 'Każdą zgodę możesz w dowolnym momencie wycofać. Najszybciej umówimy bezpłatną analizę telefonicznie.',
   errors: {
     required: 'To pole jest wymagane.',
     choose: 'Wybierz jedną z odpowiedzi.',
@@ -280,17 +286,13 @@ export const booking = {
     email: 'Podaj poprawny adres e-mail, np. jan@firma.pl.',
     phone: 'Podaj poprawny numer telefonu (min. 9 cyfr).',
     website: 'Podaj poprawny adres strony, np. www.twojafirma.pl.',
-    summary: 'Popraw zaznaczone pola, aby przejść dalej.',
+    summary: 'Popraw zaznaczone pola, aby wysłać zgłoszenie.',
   },
   noCapacityText:
     'Dziękujemy za zgłoszenie. Najlepsze efekty osiągamy z firmami, które mają wolne moce produkcyjne. Gdy zwolni się miejsce w Twoim kalendarzu, zapraszamy do kontaktu.',
-  calendarLoading: 'Ładowanie kalendarza…',
-  calendarMissing: `${TODO} Ustaw CALENDLY_URL w pliku src/config.ts, aby wyświetlić kalendarz.`,
-  calendarFallback: 'Jeśli kalendarz się nie wyświetla, zadzwoń:',
-  back: 'Wróć do formularza',
   privacy: {
     before:
-      'Administratorem danych jest Everweb.pl Piotr Turowski, ul. Wojska Polskiego 5/5, 64-100 Leszno. Dane przetwarzamy w celu kontaktu i umówienia rozmowy. Szczegóły w ',
+      'Administratorem danych jest Everweb.pl Piotr Turowski, ul. Wojska Polskiego 5/5, 64-100 Leszno. Dane przetwarzamy w celu obsługi zgłoszenia i przeprowadzenia bezpłatnej analizy, a kontaktujemy się w sposób, na który wyrazisz zgodę. Szczegóły, w tym Twoje prawa, w ',
     link: 'Polityce prywatności',
     after: '.',
   },
@@ -316,9 +318,9 @@ export const cookies = {
 };
 
 export const thanks = {
-  title: 'Do zobaczenia na rozmowie',
-  text: 'Potwierdzenie i link do spotkania znajdziesz w skrzynce e-mail.',
-  prepareTitle: 'Jak się przygotować',
+  title: 'Dziękujemy za zgłoszenie',
+  text: 'Skontaktujemy się z Tobą, aby umówić termin bezpłatnej analizy.',
+  prepareTitle: 'Jak się przygotować do rozmowy',
   prepareItems: [
     'aktualna oferta i ceny,',
     'wolne moce produkcyjne na najbliższe miesiące,',
