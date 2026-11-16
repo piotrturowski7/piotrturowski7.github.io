@@ -271,14 +271,6 @@ export const booking = {
       noIndex: 2,
     },
   },
-  // Zgody na kontakt: dobrowolne, domyślnie odznaczone. Ich treść trafia do CRM jako dowód zgody.
-  consentsTitle: 'Zgody na kontakt (dobrowolne)',
-  consents: [
-    { id: 'phone', label: 'Wyrażam zgodę na kontakt telefoniczny w sprawie mojego zgłoszenia i usług everhome.' },
-    { id: 'sms', label: 'Wyrażam zgodę na otrzymywanie wiadomości SMS w sprawie mojego zgłoszenia i usług everhome.' },
-    { id: 'email', label: 'Wyrażam zgodę na otrzymywanie wiadomości e-mail w sprawie mojego zgłoszenia i usług everhome.' },
-  ],
-  consentsHint: 'Każdą zgodę możesz w dowolnym momencie wycofać. Najszybciej umówimy bezpłatną analizę telefonicznie.',
   errors: {
     required: 'To pole jest wymagane.',
     choose: 'Wybierz jedną z odpowiedzi.',
@@ -292,7 +284,7 @@ export const booking = {
     'Dziękujemy za zgłoszenie. Najlepsze efekty osiągamy z firmami, które mają wolne moce produkcyjne. Gdy zwolni się miejsce w Twoim kalendarzu, zapraszamy do kontaktu.',
   privacy: {
     before:
-      'Administratorem danych jest Everweb.pl Piotr Turowski, ul. Wojska Polskiego 5/5, 64-100 Leszno. Dane przetwarzamy w celu obsługi zgłoszenia i przeprowadzenia bezpłatnej analizy, a kontaktujemy się w sposób, na który wyrazisz zgodę. Szczegóły, w tym Twoje prawa, w ',
+            'Administratorem danych jest Everweb.pl Piotr Turowski, ul. Wojska Polskiego 5/5, 64-100 Leszno. Po wysłaniu formularza skontaktujemy się z Tobą telefonicznie lub e-mailowo, aby umówić bezpłatną analizę. Dane przetwarzamy w celu obsługi zgłoszenia i przeprowadzenia analizy. Szczegóły, w tym Twoje prawa, w ',
     link: 'Polityce prywatności',
     after: '.',
   },
